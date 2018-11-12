@@ -10,8 +10,27 @@ function showUiPos(inputs){
     }
 }
 
+let uiPos = [0,0,0,0,0,0];
+const SPEED = 1/15;
+function updateUIPos(inputs, time){
+    uiPos = uiPos.map((v,i) =>{
+        v += inputs[i] * time * SPEED;
+        if(v > 1) return 1;
+        if(v < -1) return -1;
+        return v;
+    })
+}
+
+let last = null;
+
 function step(timestamp){
-    showUiPos(input.getInputs());
+    if (!last) last = timestamp;
+    let time = (timestamp - last) / 1000;
+    last = timestamp
+
+    updateUIPos(input.getInputs(), time);
+
+    showUiPos(uiPos);
     window.requestAnimationFrame(step);
 }
 
