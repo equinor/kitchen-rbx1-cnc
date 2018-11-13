@@ -1,13 +1,16 @@
 import { Input } from "./input.mjs";
+import { Server } from "./server.mjs";
 
 const input = new Input();
 input.setup();
 
-function showUiPos(inputs){
-    for (let i = 0; i < inputs.length; i++) {
-        let elem = document.getElementById("ui"+ (i + 1))
-        elem.textContent = inputs[i].toFixed(3);
-    }
+const server = new Server();
+
+function showValues(values, prefix){
+    for (let i = 0; i < values.length; i++) {
+        let elem = document.getElementById(prefix+ (i + 1))
+        elem.textContent = values[i].toFixed(3);
+    } 
 }
 
 let uiPos = [0,0,0,0,0,0];
@@ -29,8 +32,11 @@ function step(timestamp){
     last = timestamp
 
     updateUIPos(input.getInputs(), time);
+    server.updateUi(uiPos);
 
-    showUiPos(uiPos);
+    showValues(uiPos, "ui");
+    showValues(server.server, "s");
+    showValues(server.robot, "r");
     window.requestAnimationFrame(step);
 }
 
