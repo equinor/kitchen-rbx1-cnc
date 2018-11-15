@@ -14,7 +14,7 @@ This will download and install missing pytion pacages to its own enviropment bef
 
 The server will:
 * Test if robot is conected localy. (todo)
-* Will run in testmode if not found. (todo)
+* Will run in testmode if not found.
 * Will lissen on conections from 0.0.0.0:8080.
 
 Just browse to http://ip:8080/ to use web ui.

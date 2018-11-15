@@ -9,7 +9,7 @@ const server = new Server();
 function showValues(values, prefix){
     for (let i = 0; i < values.length; i++) {
         let elem = document.getElementById(prefix+ (i + 1))
-        elem.textContent = values[i].toFixed(3);
+        elem.textContent = values[i].toFixed(2);
     } 
 }
 
