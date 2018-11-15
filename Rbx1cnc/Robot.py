@@ -14,7 +14,7 @@ class Robot:
             joint.setMicroSteps(16)
 
         #some initalization stuff that needs cleanup
-        joints[0].setMaxSpeed(150)
+        joints[0].setMaxSpeed(50)
         joints[1].setMaxSpeed(150)
         joints[2].setMaxSpeed(250)
         joints[3].setMaxSpeed(150)
@@ -30,15 +30,14 @@ class Robot:
         joints[5].setCurrent(65,65, 65, 65)
         
         self._axis = [
-            Axis(-5000,5000,joint[0]),
-            Axis(-12500,12500,joint[1]),
-            Axis(-22500,22500,joint[2]),
+            Axis(-5000,5000,joints[0]),
+            Axis(-12500,12500,joints[1]),
+            Axis(-22500,22500,joints[2]),
             NullAxis(),
-            Axis(-4000,4000,joint[4]),
-            Axis(-1650,1650,joint[5]),
-            Axis(7,17,Gripper())
+            Axis(-4000,4000,joints[4]),
+            Axis(-1650,1650,joints[5])
         ]
-        self._target = map(lambda a: a.getPosition(), self._axis)
+        self._target = list(map(lambda a: a.getPosition(), self._axis))
 
     def isBusy(self):
         for axis in self._axis:
@@ -55,9 +54,9 @@ class Robot:
 
     def getStatus(self): 
         return {
-            'busy': self.isBusy,
+            'busy': self.isBusy(),
             'targetPos' : self._target,
-            'currentPos' : map(lambda a: a.getPosition(), self._axis)
+            'currentPos' : list(map(lambda a: a.getPosition(), self._axis))
         }
 
 class Gripper:
