@@ -3,40 +3,18 @@ import mimetypes
 import asyncio
 
 class Server():
-    def __init__(self):
+    def __init__(self, robot):
         mimetypes.add_type('text/javascript', '.mjs')
 
-        self.serverPos = [0,0,0,0,0,0]
-        self.robotPos = [0,0,0,0,0,0]
-        self.busy = False
-
+        self.robot = robot
 
     async def getRobot(self, request):
-        return web.json_response(self.getStatus())
+        return web.json_response(self.robot.getStatus())
 
     async def postRobot(self, request):
-        if self.busy == True :
-            return web.HTTPServiceUnavailable
-
         json = await request.json()
-        self.serverPos = json
-        self.busy = True
-
-        asyncio.create_task(self.runRobot())
-        
-        return web.json_response(self.getStatus())
-
-    async def runRobot(self):
-        await asyncio.sleep(1)
-        self.robotPos = self.serverPos
-        self.busy = False
-
-    def getStatus(self): 
-        return {
-            'busy': self.busy,
-            'targetPos' : self.serverPos,
-            'currentPos' : self.robotPos
-        }
+        self.robot.runRobot(json)
+        return web.json_response(self.robot.getStatus())
 
     def start(self):
         app = web.Application()
