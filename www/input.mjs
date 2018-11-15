@@ -8,10 +8,10 @@ export class Input {
         let inputs = this.inputs.slice();
         if(this.gamepadIndex >= 0){
             var gamepad = navigator.getGamepads()[this.gamepadIndex];
-            inputs[0] = axisOrDefault(gamepad.axes[0], inputs[0]);
-            inputs[1] = axisOrDefault(gamepad.axes[1], inputs[1]);
-            inputs[2] = axisOrDefault(gamepad.axes[2], inputs[2]);
-            inputs[3] = axisOrDefault(gamepad.axes[5], inputs[3]);
+            inputs[0] = axisOrDefault(gamepad.axes[1], inputs[0]);
+            inputs[1] = axisOrDefault(gamepad.axes[0], inputs[1]);
+            inputs[2] = axisOrDefault(gamepad.axes[5], inputs[2]);
+            inputs[3] = axisOrDefault(gamepad.axes[2], inputs[3]);
             inputs[4] = buttonsOrDefault(gamepad.buttons[0], gamepad.buttons[2], inputs[4]);
             inputs[5] = buttonsOrDefault(gamepad.buttons[1], gamepad.buttons[3], inputs[5]);
         }

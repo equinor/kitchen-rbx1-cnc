@@ -7,13 +7,13 @@ input.setup();
 const server = new Server();
 
 function showValues(values, prefix){
-    for (let i = 0; i < values.length; i++) {
+    for (let i = 0; i < 6; i++) {
         let elem = document.getElementById(prefix+ (i + 1))
         elem.textContent = values[i].toFixed(2);
     } 
 }
 
-let uiPos = [0,0,0,0,0,0];
+let uiPos = [0,0,0,0,0,0,-1];
 const SPEED = 1/15;
 function updateUIPos(inputs, time){
     uiPos = uiPos.map((v,i) =>{

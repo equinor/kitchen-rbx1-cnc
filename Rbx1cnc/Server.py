@@ -9,6 +9,7 @@ class Server():
         self.robot = robot
 
     async def getRobot(self, request):
+        self.robot.getStatus() 
         return web.json_response(self.robot.getStatus())
 
     async def postRobot(self, request):
@@ -21,4 +22,4 @@ class Server():
         app.add_routes([web.get('/robot', self.getRobot),
                         web.post('/robot', self.postRobot)])
         app.router.add_static('/', './www', show_index=True)
-        web.run_app(app)
+        web.run_app(app, port=8082)
