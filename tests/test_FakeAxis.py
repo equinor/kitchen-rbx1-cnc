@@ -15,28 +15,28 @@ class FakeAxisTest(unittest.TestCase):
         fake = Rbx1cnc.FakeAxis(False)
         fake.goTo(10)
         self.assertTrue(fake.isBusy())
-        fake._update();
+        fake._update()
         self.assertFalse(fake.isBusy())
         self.assertEqual(fake.getPosition(), 10)
 
     def test_move_negative(self):
         fake = Rbx1cnc.FakeAxis(False)
         fake.goTo(-10)
-        fake._update();
+        fake._update()
         self.assertEqual(fake.getPosition(), -10)
 
     def test_longmove(self):
         fake = Rbx1cnc.FakeAxis(False)
         fake.goTo(20)
-        fake._update();
+        fake._update()
         self.assertEqual(fake.getPosition(), 15)
-        fake._update();
+        fake._update()
         self.assertEqual(fake.getPosition(), 20)
 
     def test_longmove_negative(self):
         fake = Rbx1cnc.FakeAxis(False)
         fake.goTo(-20)
-        fake._update();
+        fake._update()
         self.assertEqual(fake.getPosition(), -15)
-        fake._update();
+        fake._update()
         self.assertEqual(fake.getPosition(), -20)
