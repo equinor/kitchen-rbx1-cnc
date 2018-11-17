@@ -47,7 +47,7 @@ class Robot:
     def runRobot(self, points):
         if self.isBusy(): return
         self._target = points
-
+        
         for axis, value in zip(self._axis, self._target):
             axis.goTo(value)
 

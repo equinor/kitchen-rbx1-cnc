@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\Ole Martin\\.virtualenvs\\rbx1-cnc-7Ow1J_ba\\Scripts\\python.exe"
+    "python.pythonPath": "/home/olav/.local/share/virtualenvs/rbx1-cnc-XIb_llge/bin/python",
+    "python.venvPath" : "${workspaceFolder}"
 }
