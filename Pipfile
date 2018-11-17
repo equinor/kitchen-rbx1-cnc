@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 aiohttp = "*"
+opencv-python="*"
 
 [dev-packages]
 pylint = "*"
