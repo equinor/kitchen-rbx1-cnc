@@ -7,7 +7,8 @@ class Camera(BaseCamera):
         camera = cv2.VideoCapture(0)
         params = (int(cv2.IMWRITE_JPEG_QUALITY), 90)
         if not camera.isOpened():
-            raise RuntimeError('Could not start camera.')
+            print('Could not start camera')
+            Camera.killCamera = True
 
         while not Camera.killCamera:
             # read current frame

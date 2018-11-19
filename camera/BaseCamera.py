@@ -15,6 +15,7 @@ class BaseCamera(object):
             signal.signal(signal.SIGINT, self.handler)
             BaseCamera.thread.start()
 
+
     def handler(self):
         if BaseCamera.thread is not None:
             BaseCamera.killCamera = True
