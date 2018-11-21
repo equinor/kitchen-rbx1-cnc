@@ -9,8 +9,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+idna-ssl = {version = "*", markers = "python_version == '<3.7'"}
 aiohttp = "*"
-opencv-python="*"
+opencv-python = "*"
+spidev = "*"
+slushengine = {editable = true,git = "https://github.com/Roboteurs/slushengine.git"}
+
 
 [dev-packages]
 pylint = "*"

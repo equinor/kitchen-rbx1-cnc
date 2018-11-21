@@ -49,7 +49,8 @@ class Robot:
         self._target = points
         
         for axis, value in zip(self._axis, self._target):
-            axis.goTo(value)
+            if (value is not None):
+                axis.goTo(value)
 
 
     def getStatus(self): 

@@ -28,7 +28,6 @@ class BaseCamera(object):
     def getFrame(self):
         """Return the current camera frame."""
         BaseCamera.lastAccess = time.time()
-        time.sleep(0.1)
         return BaseCamera.frame
 
     @classmethod
@@ -38,7 +37,7 @@ class BaseCamera(object):
         framesIterator = cls.frames()
         for frame in framesIterator:
             BaseCamera.frame = frame
-
+            time.sleep(0.1)
             # if there hasn't been any clients asking for frames in
             # the last 10 seconds then stop the thread
             if time.time() - BaseCamera.lastAccess > 10:
