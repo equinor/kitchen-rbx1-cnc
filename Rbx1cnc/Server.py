@@ -18,7 +18,7 @@ class Server():
 
     async def postRobot(self, request):
         json = await request.json()
-        self.robot.runRobot(json)
+        self.robot.setGoalTarget(json)
         return web.json_response(self.robot.getStatus())
     
     async def cameraFeed(self, request):

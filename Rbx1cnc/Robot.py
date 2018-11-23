@@ -1,5 +1,8 @@
 import RPi.GPIO as GPIO
 import Slush
+import threading
+import signal
+import math
 from .Axis import Axis, NullAxis
 
 class Robot:
@@ -39,19 +42,24 @@ class Robot:
         ]
         self._target = list(map(lambda a: a.getPosition(), self._axis))
 
+        # A running thread contineously move robot in small increments to reach the goal target
+        self.thread = None
+        self.killMover = False
+        self.thread = threading.Thread(target=self._robotMoverThread)
+        signal.signal(signal.SIGINT, self.handler)
+        self.thread.start()
+
+    def handler(self):
+        if Robot.thread is not None:
+            Robot.killMover = True
+
     def isBusy(self):
         for axis in self._axis:
             if axis.isBusy(): return True
         return False
 
-    def runRobot(self, points):
-        if self.isBusy(): return
+    def setGoalTarget(self, points):
         self._target = points
-        
-        for axis, value in zip(self._axis, self._target):
-            if (value is not None):
-                axis.goTo(value)
-
 
     def getStatus(self): 
         return {
@@ -59,6 +67,40 @@ class Robot:
             'targetPos' : self._target,
             'currentPos' : list(map(lambda a: a.getPosition(), self._axis))
         }
+  
+    def runRobot(self):
+        currentPos = []
+        for axis in self._axis:
+            currentPos.append(axis.getPosition())
+        maxSpeed = 80
+
+        #TODO: experiment with having the robot move in smaller increments
+        #make a list of the difference
+        print('Moving robot')
+        print(currentPos)
+        differencepose = [points - currentPos for points, currentPos in zip(self._target, currentPos)]
+        maxmove = (max(map(abs, differencepose)))
+        i = 0
+        for axis in self._axis:
+            if type(axis) is NullAxis: continue
+            try:
+                jointspeed = maxSpeed * (abs(differencepose[i])/maxmove)
+            except:
+                jointspeed = 1
+            if jointspeed < 1: jointspeed = 1
+            joint = axis.getJoint()
+            joint.setMaxSpeed(math.ceil(jointspeed))
+            joint.setMinSpeed(0)
+            joint.goTo(int(self._target[i]))
+            i = i + 1
+
+    def _robotMoverThread(robot):
+        # TODO: experiment with busy. Can we change position mid change? 
+        # Or move non-busy joints independently of other busy joints
+        while not robot.killMover:
+            if robot.isBusy(): continue
+            robot.runRobot()
+        robot.thread = None
 
 class Gripper:
     def __init__(self):

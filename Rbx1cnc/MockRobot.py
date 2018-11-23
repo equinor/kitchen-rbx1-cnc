@@ -13,8 +13,8 @@ class MockRobot:
     def isBusy(self):
         return False
 
-    def runRobot(self, points):
-        print('runRobot', points)
+    def setGoalTarget(self, points):
+        print('goalTarget', points)
 
 
     def getStatus(self): 

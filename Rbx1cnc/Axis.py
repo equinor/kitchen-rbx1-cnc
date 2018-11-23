@@ -19,6 +19,9 @@ class Axis():
     def isBusy(self):
         return self._driver.isBusy()
     
+    def getJoint(self):
+        return self._driver
+
     def getPosition(self):
         return self._fromStep(self._driver.getPosition())
 

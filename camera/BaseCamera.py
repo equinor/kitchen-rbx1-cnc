@@ -11,6 +11,7 @@ class BaseCamera(object):
     def __init__(self):
         if BaseCamera.thread is None:
             # start background frame thread
+            # TODO: maybe not self here?
             BaseCamera.thread = threading.Thread(target=self._thread)
             signal.signal(signal.SIGINT, self.handler)
             BaseCamera.thread.start()
@@ -30,7 +31,6 @@ class BaseCamera(object):
         BaseCamera.lastAccess = time.time()
         return BaseCamera.frame
 
-    @classmethod
     def _thread(cls):
         """Camera background thread."""
         print('Starting camera thread.')
