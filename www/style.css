@@ -1,7 +1,13 @@
-button {
+table button {
     background-color: transparent;
     color: black;
     border-color: black;
     font-size: 1em;
+    margin: 0px;
+    width: 25px;
+    padding: 0 !important;
+  }
 
+  .special-buttons button {
+    margin: 5px;
   }

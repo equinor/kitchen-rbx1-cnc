@@ -1,5 +1,5 @@
 {
     // "python.pythonPath": Set in user settings,
     "python.venvPath": "${workspaceFolder}",
-    "python.pythonPath": "/home/ovatn/.local/share/virtualenvs/rbx1-cnc-_cWl3kv8/bin/python"
+    "python.pythonPath": "/home/olav/.local/share/virtualenvs/rbx1-cnc-XIb_llge/bin/python"
 }

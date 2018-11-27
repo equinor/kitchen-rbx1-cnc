@@ -14,7 +14,7 @@ class MockRobot:
         return False
 
     def setGoalTarget(self, points):
-        print('goalTarget', points)
+        self._target = points
 
 
     def getStatus(self): 

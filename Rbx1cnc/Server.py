@@ -1,6 +1,7 @@
 from aiohttp import web, MultipartWriter
 import mimetypes
 import asyncio
+import time
 from camera import Camera
 
 class Server():
@@ -19,7 +20,25 @@ class Server():
     async def postRobot(self, request):
         json = await request.json()
         self.robot.setGoalTarget(json)
+        print('Setting target')
         return web.json_response(self.robot.getStatus())
+    
+    async def postActionRobot(self, request):
+        json = await request.json()
+        performedAction = 'none'
+        desiredAction = ''
+
+        if json is not None and json['action'] is not None:
+            desiredAction = json['action']
+            if desiredAction == 'kill':
+                print('Kill robot')
+                self.robot.kill()
+                performedAction = desiredAction
+            elif desiredAction == 'home':
+                print('Move robot back to home')
+                self.robot.setGoalTarget([0,0,0,0,0,0])
+                performedAction = desiredAction
+        return web.json_response({'action': performedAction})
     
     async def cameraFeed(self, request):
             response = web.StreamResponse(status=200, reason='OK', headers={
@@ -44,8 +63,9 @@ class Server():
 
     def start(self):
         app = web.Application()
-        app.add_routes([web.get('/robot', self.getRobot),
-                        web.post('/robot', self.postRobot),
+        app.add_routes([web.get('/robot/pose', self.getRobot),
+                        web.post('/robot/pose', self.postRobot),
+                        web.post('/robot/action', self.postActionRobot),
                         web.get('/', self.index),
                         web.get('/camera-feed', self.cameraFeed)])
         app.router.add_static('/', './www', show_index=False)

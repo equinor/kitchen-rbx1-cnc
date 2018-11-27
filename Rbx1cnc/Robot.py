@@ -3,6 +3,7 @@ import Slush
 import threading
 import signal
 import math
+import time
 from .Axis import Axis, NullAxis
 
 class Robot:
@@ -58,6 +59,11 @@ class Robot:
             if axis.isBusy(): return True
         return False
 
+    def kill(self):
+        for axis in self._axis:
+            if type(axis) is NullAxis: continue
+            axis.getJoint().hardStop()
+
     def setGoalTarget(self, points):
         self._target = points
 
@@ -78,11 +84,14 @@ class Robot:
         #make a list of the difference
         print('Moving robot')
         print(currentPos)
+        print(self.target)
+        time.sleep(5)
         differencepose = [points - currentPos for points, currentPos in zip(self._target, currentPos)]
         maxmove = (max(map(abs, differencepose)))
         i = 0
         for axis in self._axis:
             if type(axis) is NullAxis: continue
+            if differencepose < 0.1: continue
             try:
                 jointspeed = maxSpeed * (abs(differencepose[i])/maxmove)
             except:
