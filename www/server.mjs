@@ -50,7 +50,6 @@ export class Server{
 }
 
 
-
 function delay(){
     return new Promise(function(resolve) {
         setTimeout(resolve, 500);

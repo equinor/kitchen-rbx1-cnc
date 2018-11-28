@@ -30,6 +30,7 @@ function setupSpecialButtons() {
     const moveButton = document.getElementById("home");
     moveButton.addEventListener("mousedown", () => {
         postMoveHome();
+        input.reset();
     });
 
 }

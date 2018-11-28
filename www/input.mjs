@@ -1,6 +1,6 @@
 export class Input {
     constructor(){
-        this.inputs = [0,0,0,0,0,0]
+        this.inputs = [0,0,0,0,0,0];
         this.gamepadIndex = -1;
     }
     
@@ -23,7 +23,10 @@ export class Input {
         this.setupButtons();
         this.setupGamepad();
     }
-
+    
+    reset() {
+        this.inputs = [0,0,0,0,0,0];
+    }
     setupButtons(){
         this._setupButtonRow("#add_button_row button", 1);
         this._setupButtonRow("#sub_button_row button", -1);
@@ -58,7 +61,7 @@ export class Input {
 }
 
 function axisOrDefault(axis, defaultValue){
-    if(Math.abs(axis) < 0.01){
+    if(Math.abs(axis) < 0.01 || isNaN(axis)){
         return defaultValue;
     }
     return axis;
