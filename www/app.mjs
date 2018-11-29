@@ -31,6 +31,7 @@ function setupSpecialButtons() {
     moveButton.addEventListener("mousedown", () => {
         postMoveHome();
         input.reset();
+        uiPos = [0,0,0,0,0,0,-1];
     });
 
 }

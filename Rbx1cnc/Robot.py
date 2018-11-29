@@ -10,7 +10,7 @@ class Robot:
     def __init__(self):
         
         self._target = [0,0,0,0,0,0]
-        self._current = [0,0,0,0,0,0]
+        self._prevPos = [0,0,0,0,0,0]
         self._axis = []
         # A running thread contineously move robot in small increments to reach the goal target
         self.thread = None
@@ -45,17 +45,27 @@ class Robot:
         }
   
     def runRobot(self):
-        #axis.getPosition() is unreliable. It suddenly spew out big numbers which
-        # triggers incremental movement.
-        currentPos = []
-        for axis in self._axis:
-            currentPos.append(axis.getPosition())
-        i = 0
-        print(currentPos)
-        for axis in self._axis:
-            if type(axis) is not NullAxis:
-                axis.goTo(self._target[i])
-            i = i + 1
+        # Use the run command similar to the joystick example with manual stop and movement
+
+        for i, axis in enumerate(self._axis):
+            if type(axis) is NullAxis: continue
+            joint = axis.getJoint()
+            pos = joint.getPosition()
+            # Filter out sudden big changes in position. Happens once in a while a gives 
+            # the robots a sudden tick.
+            if abs(pos - self._prevPos) > 10000: continue
+            self._prevPos[i] = pos
+
+            correctedPos = min(max(axis._min, pos), axis._max)
+            diff = axis._toStep(self._target[i]) - correctedPos
+            print('p', pos, 'diff', diff)
+            if not joint.isBusy():
+                if abs(diff) < 30:
+                    joint.softStop()
+                elif diff > 0:
+                    joint.run(1, 20)
+                elif diff < 0:
+                    joint.run(0, 20)
 
     def prepareEngine(self):
         #setup all of the axis for the SlushEngine
@@ -76,7 +86,7 @@ class Robot:
         joints[5].setMaxSpeed(10)
 
         #joint current limits. Still setting manually becuase testing (hold A, run A, acc A, dec, A)
-        joints[0].setCurrent(65, 85, 75, 70)
+        joints[0].setCurrent(65, 80, 60, 70)
         joints[1].setCurrent(65, 85, 85, 65)
         joints[2].setCurrent(50, 50, 50, 50)
         joints[3].setCurrent(75, 75, 75, 75)
@@ -97,8 +107,8 @@ class Robot:
         # Or move non-busy joints independently of other busy joints
         robot.prepareEngine()
         while not robot.killMover:
-            if not robot.isBusy():
-                robot.runRobot()
+            robot.runRobot()
+            time.sleep(0.1)
         robot.thread = None
 
 class Gripper:
