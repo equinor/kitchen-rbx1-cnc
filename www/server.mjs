@@ -2,9 +2,9 @@ import { getPositionRobot, postPositionRobot } from "./api.mjs";
 
 export class Server{
     constructor() {
-        this._ui = [0,0,0,0,0,0];
-        this._server = [0,0,0,0,0,0];
-        this._robot = [0,0,0,0,0,0];
+        this._ui = [0,0,0,0,0,0,0];
+        this._server = [0,0,0,0,0,0,0];
+        this._robot = [0,0,0,0,0,0,0];
         this._newPose = false;
         this._serverLoop();
     }

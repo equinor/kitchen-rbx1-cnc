@@ -8,7 +8,7 @@ const server = new Server();
 setupSpecialButtons();
 
 function showValues(values, prefix){
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
         let elem = document.getElementById(prefix+ (i + 1))
         elem.textContent = values[i].toFixed(2);
     } 
@@ -31,15 +31,20 @@ function setupSpecialButtons() {
     moveButton.addEventListener("mousedown", () => {
         postMoveHome();
         input.reset();
-        uiPos = [0,0,0,0,0,0,-1];
+        uiPos = [0,0,0,0,0,0,0];
     });
 
 }
 
-let uiPos = [0,0,0,0,0,0,-1];
+let uiPos = [0,0,0,0,0,0,0];
 const SPEED = 1/15;
 function updateUIPos(inputs, time){
+    const gripperIndex = 6;
     uiPos = uiPos.map((v,i) =>{
+        if (i >= gripperIndex) {
+            v += inputs[i] * 1/10;
+            return v;
+        }
         v += inputs[i] * time * SPEED;
         if(v > 1) return 1;
         if(v < -1) return -1;

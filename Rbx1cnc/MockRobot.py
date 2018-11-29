@@ -9,6 +9,7 @@ class MockRobot:
             Axis()
         ]
         self._target = list(map(lambda a: a.getPosition(), self._axis))
+        self._target.append(0) # Mock gripper
 
     def isBusy(self):
         return False
@@ -18,10 +19,12 @@ class MockRobot:
 
 
     def getStatus(self): 
+        pos = list(map(lambda a: a.getPosition(), self._axis))
+        pos.append(0)
         return {
             'busy': self.isBusy(),
             'targetPos' : self._target,
-            'currentPos' : list(map(lambda a: a.getPosition(), self._axis))
+            'currentPos' : pos
         }
 
 class Axis():

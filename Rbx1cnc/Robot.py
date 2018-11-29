@@ -9,10 +9,13 @@ from .Axis import Axis, NullAxis
 class Robot:
     def __init__(self):
         
-        self._target = [0,0,0,0,0,0]
-        self._prevPos = [0,0,0,0,0,0]
+        self._target = [0,0,0,0,0,0, 0]
+        self._prevPos = [0,0,0,0,0,0, 0]
+        self._speed = [10, 50, 30, 15, 10, 5]
         self._axis = []
-        # A running thread contineously move robot in small increments to reach the goal target
+        self._gripper = None
+        # A running thread contineously keep track of target and current
+        #  position and move robot accordingly
         self.thread = None
         self.killMover = False
         self.thread = threading.Thread(target=self._robotMoverThread)
@@ -38,10 +41,14 @@ class Robot:
         self._target = points
 
     def getStatus(self): 
+        pos = list(map(lambda a: a.getPosition(), self._axis))
+        gripperPos = 0
+        if self._gripper: gripperPos = self._gripper.getPosition()
+        pos.append(gripperPos)
         return {
             'busy': self.isBusy(),
             'targetPos' : self._target,
-            'currentPos' : list(map(lambda a: a.getPosition(), self._axis))
+            'currentPos' : pos
         }
   
     def runRobot(self):
@@ -53,19 +60,29 @@ class Robot:
             pos = joint.getPosition()
             # Filter out sudden big changes in position. Happens once in a while a gives 
             # the robots a sudden tick.
-            if abs(pos - self._prevPos) > 10000: continue
+            if abs(pos - self._prevPos[i]) > 1000: continue
             self._prevPos[i] = pos
-
+        
             correctedPos = min(max(axis._min, pos), axis._max)
+            goalPos = axis._toStep(self._target[i])
+
+            if goalPos > axis._max or goalPos < axis._min:
+                joint.hardStop()
+                continue
+            
             diff = axis._toStep(self._target[i]) - correctedPos
-            print('p', pos, 'diff', diff)
+            if abs(diff) > 0: print('p', pos, 'diff', diff)
             if not joint.isBusy():
-                if abs(diff) < 30:
+                if abs(diff) < self._speed[i]:
                     joint.softStop()
                 elif diff > 0:
-                    joint.run(1, 20)
+                    joint.run(1, self._speed[i])
                 elif diff < 0:
-                    joint.run(0, 20)
+                    joint.run(0, self._speed[i])
+
+        gripperGoal = self._gripper.toStep(self._target[-1])
+        self._gripper.goTo(gripperGoal)
+            
 
     def prepareEngine(self):
         #setup all of the axis for the SlushEngine
@@ -78,15 +95,15 @@ class Robot:
             joint.setMicroSteps(16)
 
         #some initalization stuff that needs cleanup
-        joints[0].setMaxSpeed(10)
-        joints[1].setMaxSpeed(10)
-        joints[2].setMaxSpeed(10)
-        joints[3].setMaxSpeed(10)
-        joints[4].setMaxSpeed(10)
-        joints[5].setMaxSpeed(10)
+        joints[0].setMaxSpeed(self._speed[0])
+        joints[1].setMaxSpeed(self._speed[1])
+        joints[2].setMaxSpeed(self._speed[2])
+        joints[3].setMaxSpeed(self._speed[3])
+        joints[4].setMaxSpeed(self._speed[4])
+        joints[5].setMaxSpeed(self._speed[5])
 
         #joint current limits. Still setting manually becuase testing (hold A, run A, acc A, dec, A)
-        joints[0].setCurrent(65, 80, 60, 70)
+        joints[0].setCurrent(65, 70, 60, 70)
         joints[1].setCurrent(65, 85, 85, 65)
         joints[2].setCurrent(50, 50, 50, 50)
         joints[3].setCurrent(75, 75, 75, 75)
@@ -97,10 +114,11 @@ class Robot:
             Axis(-5000,5000,joints[0]),
             Axis(-12500,12500,joints[1]),
             Axis(-22500,22500,joints[2]),
-            NullAxis(),
+            Axis(-3500,3500,joints[3]),
             Axis(-4000,4000,joints[4]),
             Axis(-1650,1650,joints[5])
         ]
+        self._gripper = Gripper()
     
     def _robotMoverThread(robot):
         # TODO: experiment with busy. Can we change position mid change? 
@@ -118,6 +136,8 @@ class Gripper:
         GPIO.setup(18, GPIO.OUT)
         self._pwm = GPIO.PWM(18, 100)
         self._gripper = 7
+        self._min = 7
+        self._max = 17
 
     def isBusy(self):
         return False
@@ -126,5 +146,12 @@ class Gripper:
         return self._gripper
 
     def goTo(self, nStep):
-        self._gripper = nStep
+        if self._gripper == nStep: return
+        self._gripper = min(max( nStep, self._min), self._max)
         self._pwm.start(self._gripper)
+
+    def toStep(self, value):
+        value = (value + 1) / 2
+        value = value * (self._max - self._min)
+        return int(value + self._min)
+    

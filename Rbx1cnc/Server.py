@@ -14,13 +14,11 @@ class Server():
         return web.FileResponse('./www/index.html')
 
     async def getRobot(self, request):
-        self.robot.getStatus() 
         return web.json_response(self.robot.getStatus())
 
     async def postRobot(self, request):
         json = await request.json()
         self.robot.setGoalTarget(json)
-        print('Setting target')
         return web.json_response(self.robot.getStatus())
     
     async def postActionRobot(self, request):
@@ -36,7 +34,7 @@ class Server():
                 performedAction = desiredAction
             elif desiredAction == 'home':
                 print('Move robot back to home')
-                self.robot.setGoalTarget([0,0,0,0,0,0])
+                self.robot.setGoalTarget([0,0,0,0,0,0,0])
                 performedAction = desiredAction
         return web.json_response({'action': performedAction})
     
