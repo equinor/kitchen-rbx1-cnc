@@ -121,8 +121,6 @@ class Robot:
         self._gripper = Gripper()
     
     def _robotMoverThread(robot):
-        # TODO: experiment with busy. Can we change position mid change? 
-        # Or move non-busy joints independently of other busy joints
         robot.prepareEngine()
         while not robot.killMover:
             robot.runRobot()
